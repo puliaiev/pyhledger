@@ -101,7 +101,7 @@ class Amount(object):
 
     def __str__(self):
         "Format unit/currency quantity as a string."
-        a = "%.4f" % (self.quantity)
+        a = "%.9f" % (self.quantity)
         a = "%s %s" % (a.rstrip("0").rstrip(".,"), self.currency)  #unfortunately %g does not do the correct thing so we need to use rstrip
         if not self.totalprice is None:
             if not self.perunitprice is None and self.quantity == 0:
