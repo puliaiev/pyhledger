@@ -621,7 +621,7 @@ def mergeByMonthQuarterYear(journal, mergeBy="month"):
 
 
 
-re_amount_str_3captures = r"([€$]|[a-zA-Z]+)?\s*((?:-\s?)?[0-9.,]+)\s*([€$]|[a-zA-Z]+)?"
+re_amount_str_3captures = r"([€$]|[a-zA-Z]+)?\s*((?:-\s?)?[0-9.,]+)\s*([€$₴]|[a-zA-Z]+)?"
 re_account_str = r"(?:[^ \t\n\r\f\v;]| [^ \t\n\r\f\v;])+"
 re_journalcommentline = re.compile(r"^;(.+)$")
 re_commentline = re.compile(r"^\s\s+;(.+)$")
