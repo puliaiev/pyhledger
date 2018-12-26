@@ -227,7 +227,10 @@ class Transaction(object):
         return copy.deepcopy(self)
 
     def __lt__(self, o):
-        return self.date+str(self.code) < o.date+str(o.code)
+        if self.__date == o.__date:
+            return str(self.code) < str(o.code)
+        else:
+            return self.__date < o.__date
 
     ## description are journal comments before an transaction (not very aptly named... TODO)
     def addDescription(self, desc):
@@ -283,10 +286,13 @@ class Transaction(object):
     def setDate(self, date):
         if date is None or date == "":
             self.date = datetime.date.today().strftime(dateformat_hledger_csvexport_)
+            self.__date = datetime.date.today()
         elif isinstance(date, datetime.datetime) or isinstance(date,datetime.date):
             self.date = date.strftime(dateformat_hledger_csvexport_)
+            self.__date = date
         else:
             self.date=date
+            self.__date = datetime.datetime.strptime(date, dateformat_hledger_csvexport_).date()
         return self
 
     def setName(self, name):
@@ -967,6 +973,20 @@ if __name__ == '__main__':
             t.status = None
             self.assertEqual(t.pending, False)
             self.assertEqual(t.cleared, False)
+        
+        def test_Date(self):
+            t1 = Transaction('bla1', datetime.datetime(2007, 12, 6, 15, 29, 43))
+            t2 = Transaction('bla2', datetime.datetime(2007, 12, 6, 15, 30, 43))
+            self.assertEqual(t2 > t1, True)
+            t1 = Transaction('bla1', '2017/11/6')
+            t2 = Transaction('bla2', '2017/11/6')
+            self.assertEqual(t2 > t1, False)
+            self.assertEqual(t2 < t1, False)
+            t1 = Transaction('bla1', '2017/11/6')
+            t1.setCode('123')
+            t2 = Transaction('bla2', '2017/11/6')
+            t2.setCode('124')
+            self.assertEqual(t2 > t1, True)
 
 
     unittest.main()
