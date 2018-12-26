@@ -217,6 +217,7 @@ class Transaction(object):
         self.desc=[]
         self.name=name.strip()
         self.code=None
+        self.status=None
         self.comments=[]
         self.postings=[]
         self.tags={}
@@ -236,6 +237,28 @@ class Transaction(object):
     def setCode(self, code):
         self.code=code.strip() if isinstance(code,str) else None
         return self
+
+    @property
+    def cleared(self):
+        return self.status == '*'
+
+    @cleared.setter
+    def cleared(self, cleared):
+        if cleared:
+            self.status = '*'
+        else:
+            self.status = None
+
+    @property
+    def pending(self):
+        return self.status == '!'
+
+    @pending.setter
+    def pending(self, pending):
+        if pending:
+            self.status = '!'
+        else:
+            self.status = None
 
     ## comment is next to transaction name or after transaction name
     def addComment(self, comment):
@@ -409,7 +432,10 @@ class Transaction(object):
         if len(commenttags) > 0:
             commenttags.insert(0,";")
         lines += map(lambda s: "; %s" % s, self.desc)
-        lines.append(" ".join(filter(len,[self.date,"(%s)" % self.code if not self.code is None and len(self.code) > 0 else "", self.name]+commenttags)))
+        lines.append(" ".join(filter(len,[self.date,
+            "(%s)" % self.code if not self.code is None and len(self.code) > 0 else "",
+            self.status if not self.status is None else "",
+            self.name]+commenttags)))
         if len(self.comments) > 1:  #are there even more comments?
             lines += map(lambda s: "    ; %s" % s, self.comments[1:])
         if len(self.postings) > 0:
@@ -930,6 +956,17 @@ if __name__ == '__main__':
             self.assertEqual(nextt.postings[3].account, "assets:inventory")
             self.assertEqual(nextt.postings[3].amount.quantity, 0)
             self.assertRaises(StopIteration, next, mi)
+
+        def test_Status(self):
+            t = Transaction('bla', None)
+            t.pending = True
+            self.assertEqual(t.status, "!")
+            t.cleared = True
+            self.assertEqual(t.status, "*")
+            self.assertEqual(t.pending, False)
+            t.status = None
+            self.assertEqual(t.pending, False)
+            self.assertEqual(t.cleared, False)
 
 
     unittest.main()

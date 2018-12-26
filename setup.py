@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='ledger',
-      version='0.2',
+      version='0.2.1',
       description='',
       url='https://github.com/btittelbach/pyhledger/',
       author='',
