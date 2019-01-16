@@ -263,6 +263,10 @@ class Transaction(object):
         else:
             self.status = None
 
+    @property
+    def time(self):
+        return self.__date.strftime('%H:%M:%S')
+
     ## comment is next to transaction name or after transaction name
     def addComment(self, comment):
         self.comments.append(comment)
